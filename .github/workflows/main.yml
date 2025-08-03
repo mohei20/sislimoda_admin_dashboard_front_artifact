@@ -7,27 +7,28 @@ on:
 
 jobs:
   deploy:
-    name: Deploy artifact and restart IIS
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Upload root files to remote IIS server
+      - name: Upload project files to IIS
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
+          username: ${{ secrets.REMOTE_USER }}         # lowercase 'administrator'
           password: ${{ secrets.REMOTE_PASSWORD }}
-          source: "./*"                           
-          target: "C:/inetpub/test_pipeline"     
+          source: "./*"
+          target: "C:/inetpub/test_pipeline"
+          use_insecure_cipher: true
 
       - name: Restart IIS on remote server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
+          username: ${{ secrets.REMOTE_USER }}         # lowercase 'administrator'
           password: ${{ secrets.REMOTE_PASSWORD }}
           script: |
-            iisreset 
+            iisreset
+          use_insecure_cipher: true
