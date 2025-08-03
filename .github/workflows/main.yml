@@ -3,7 +3,7 @@ name: Deploy to IIS via SSH
 on:
   push:
     branches:
-      - main  # or 'dev'
+      - main
 
 jobs:
   deploy:
@@ -11,17 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Upload artifact to remote IIS server
+      - name: Upload root files to remote IIS server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           password: ${{ secrets.REMOTE_PASSWORD }}
-          source: "C:\inetpub\test_pipeline"
-          target: "${{ secrets.REMOTE_IIS_PATH }}"
+          source: "./*"                           
+          target: "C:/inetpub/test_pipeline"     
 
       - name: Restart IIS on remote server
         uses: appleboy/ssh-action@v1.0.3
