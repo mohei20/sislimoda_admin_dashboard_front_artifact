@@ -1,0 +1,38 @@
+name: Deploy to IIS
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  deploy:
+    name: Copy artifact and restart IIS
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Locate artifact folder
+        run: |
+          echo "Listing workspace content..."
+          Get-ChildItem -Recurse
+
+      - name: Copy artifact to remote IIS site
+        uses: gsoft-inc/ssh-action@v0.1.1
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            robocopy C:\inetpub\test_pipeline "${{ secrets.REMOTE_IIS_PATH }}" /MIR /NFL /NDL /NJH /NJS /NP
+
+      - name: Restart IIS on remote server
+        uses: gsoft-inc/ssh-action@v0.1.1
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          script: |
+            iisreset
