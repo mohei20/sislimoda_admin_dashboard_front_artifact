@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}         # lowercase 'administrator'
           password: ${{ secrets.REMOTE_PASSWORD }}
           source: "./*"
-          target: "C:/inetpub/test_pipeline"
+          target: "C:/inetpub/test"
           use_insecure_cipher: true
 
       - name: Restart IIS on remote server
